@@ -186,10 +186,10 @@ I will be using the biLSTM baseline with a `sequence length=6`, and an optimizer
 
 
 #### Sequence Normalization  
-We will be exploring three normalisation strategies-
-    1. Z-Normalisation
-    2. Global Min-Max Normalisation
-    3. Sequence-wise Min-Max Normalisation
+We will be exploring three normalisation strategies-  
+    1. Z-Normalisation  
+    2. Global Min-Max Normalisation  
+    3. Sequence-wise Min-Max Normalisation  
 
 <table>
   <tr>
@@ -204,8 +204,14 @@ We will be exploring three normalisation strategies-
     <td><img width="300" height="250" alt="norm2_6_lstm_loss" src="https://github.com/user-attachments/assets/3698d62f-85db-4688-a51b-d70ff141c91a" /></td>
     <td><img width="300" height="250" alt="norm3_6_lstm_loss" src="https://github.com/user-attachments/assets/f5a65868-811d-4179-bd26-5ede2a1436c7" /></td>
   </tr>
-</table>
+</table>  
 
+* <b>Training stability</b> - No normalisation offers a smooth training, yet it picks up on a local minimum which throws its validation loss off by a lot. Z-Normalisation offers the highest training stability of the four options. Global Min-Max scaling offers the worst performance - the model loses all information as very tiny values get compressed even more. Sequence-wise Min-Max scaling has a mostly smooth descent, placing it close to the best.  
+* <b>Convergence</b> - No normalisation has bad convergence, it gets stuck in a locak gradient and starts over-fitting. Sequence-wise Min-Max scaling and Z-normalisation offer superior results, while Global Min-Max scaling leads to chaos and no proper convergence.
+* <b>Out-of-distribution performance</b> - Upon testing with an example, [1, 2, 3, 4, 5, 6]  
+  No normalisation ---> [5, 3, 3, 1, 2, 5]
+  
+  
 
 
 
