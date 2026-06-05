@@ -202,9 +202,9 @@ We will be exploring three normalisation strategies-
   </tr>
 </table>  
 
-* <b>Training stability</b> - No normalisation offers a smooth training, yet it picks up on a local minimum which throws its validation loss off by a lot. Z-Normalisation offers the highest training stability of the four options. Global Min-Max scaling offers the worst performance - the model loses all information as very tiny values get compressed even more. Sequence-wise Min-Max scaling has a mostly smooth descent, placing it close to the best.  
+* <b>Training stability</b> - No normalisation offers a rough training, plateauing chaotically. Z-Normalisation offers the highest training stability of the four options. Global Min-Max scaling offers the worst performance - the model loses all informaation as very tiny values get compressed even more. Sequence-wise Min-Max scaling has a mostly smooth descent, placing it close to the best.  
   
-* <b>Convergence</b> - No normalisation has bad convergence, it gets stuck in a locak gradient and starts over-fitting. Sequence-wise Min-Max scaling and Z-normalisation offer superior results, while Global Min-Max scaling leads to chaos and no proper convergence.  
+* <b>Convergence</b> - No normalisation has chaotic convergence, it gets stuck in a locak gradient and starts over-fitting. Sequence-wise Min-Max scaling and Z-normalisation offer superior results, while Global Min-Max scaling leads to chaos and no proper convergence.  
   
 * <b>Out-of-distribution performance</b> - Upon testing with an example, `[1, 2, 3, 4, 5, 6]`  
   No normalisation ---> `[4, 1, 4, 4, 2, 2]`  
