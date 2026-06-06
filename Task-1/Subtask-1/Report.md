@@ -304,6 +304,44 @@ For reference, here are the attention visualisations for the various N values, f
 For this ablations, I will be using the "BERT" baseline with `batch_size=512`, `BERTModel(N=3, h=2, dmodel=10, dk=5, dv=5, vocab_size=1000, seq_len=10)`, and an optimizer `AdamW(lr=1e-3,weight_decay=1e-3,betas=(0.9,0.99)))` 
 The Positional Encoding call in `models.py` was commented to observe the effects of its absence. Unexpectedly, the model's effectiveness did not diminish. The exact same testing loss and accuracy was observed. The only conclusion that can be drawn from this is that while global position information of the tokens were not provided, the model already learnt to look at the relative positions between pairs and sort them. The task problem seems to have favoured this approach, evident from the pair-wise conclusion from the attention visualisations.
 
+### Varieties in Random Weight Initialisations  
+The "BERT" model is inherently very complicated with multiple layers. Even with `N=3`, it has a total of `6 sub-layers`! It is very prone to the problem of exploding/vanishing gradients if the weight initialisations aren't done appropriately. I will be using the "BERT" baseline with `batch_size=512`, `BERTModel(N=3, h=2, dmodel=10, dk=5, dv=5, vocab_size=1000, seq_len=6)`, and an optimizer `AdamW(lr=1e-3,weight_decay=1e-3,betas=(0.9,0.99)))`. My earlier baselines have used Xavier (Uniform) weight initialisations, and I will note how other initialisations compare. A quick note on the different initialisations considered for this-
+* Guassian Initialisation `torch.randn()` - Fills the weights with values from the Gaussian normal distribution.
+* Xavier (Uniform) Initialisation `torch.utils.init.xavier_uniform_()` - Fill the weights with values using a Xavier uniform distribution.  
+&emsp;&emsp; $$a = \text{gain} \times \sqrt{\frac{6}{fan_{in} + fan_{out}}}$$  
+* Xavier (Normal) Initialisation `torch.utils.init.xavier_normal_()` - Fill the weights with values using a Xavier normal distribution.  
+&emsp;&emsp; $$\text{std} = \text{gain} \times \sqrt{\frac{2}{fan_{in} + fan_{out}}}$$  
+* He/Kaiming (Uniform) Initialisation `torch.utils.init.kaiming_uniform_()` - Fill the weights with values using a Kaiming uniform distribution.  
+&emsp;&emsp; $$a = \sqrt{\frac{6}{(1 + \text{negative slope}^2) \times fan_{in}}}$$  
+* He/Kaiming (Normal) Initialisation `torch.utils.init.kaiming_normal_()` - Fill the weights with values using a Kaiming normal distribution.  
+&emsp;&emsp; $$\text{std} = \sqrt{\frac{2}{(1 + \text{negative slope}^2) \times fan_{in}}}$$  
+* Orthogonal Initialisation `torch.utils.init.orthogonal_()` - Fill the weights with a (semi) orthogonal matrix.  
+  
+* Any other kind of initialisation mitigates the exploding gradients that mess with the training as seen in Gaussian initialisation!
+
+The loss history for them are as below...  
+<table>
+  <tr>
+    <td align="center" width="300">Gaussian</td>
+    <td align="center" width="300">Uniform Xavier</td>
+    <td align="center" width="300">Uniform He/Kaiming</td>
+  </tr>
+  <tr>
+    <td><img width="300" height="250" alt="Gaussian_6_bert_loss" src="https://github.com/user-attachments/assets/6472d2d4-5285-4e61-b4b8-76c963c0dad9" /></td>
+    <td><img width="300" height="250" alt="Heuni_6_bert_loss" src="https://github.com/user-attachments/assets/45b006b6-bf70-4e35-bba1-3b457e410ce9" /></td>
+    <td><img width="300" height="250" alt="Henorm_6_bert_loss" src="https://github.com/user-attachments/assets/cbd41258-ada9-41aa-8f1b-ea021db0f60f" /></td>
+  </tr>
+  <tr>
+    <td align="center" width="300">Normal Xavier</td>
+    <td align="center" width="300">Normal He/Kaiming</td>
+    <td align="center" width="300">Orthogonal</td>
+  </tr>
+  <tr>
+    <td><img width="300" height="250" alt="Xaviernorm_6_bert_loss" src="https://github.com/user-attachments/assets/df139e4a-d1a7-4f3f-b600-6bbd3ada3533" /></td>
+    <td><img width="300" height="250" alt="Henorm_6_bert_loss" src="https://github.com/user-attachments/assets/aa60687c-1be0-43d5-837a-1ab38b792225" /></td>
+    <td><img width="300" height="250" alt="Ortho_6_bert_loss" src="https://github.com/user-attachments/assets/e7f1badf-084c-4095-b2e4-521aebc18563" /></td>
+  </tr>
+</table>
 
 ## Conclusion
 
