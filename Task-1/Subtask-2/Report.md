@@ -72,9 +72,9 @@ Observe some testing examples from each of the models.
 The model tends to generate repetitive or overly common tokens (like `public`, `METHOD_1`, `void`, `(`, `.`), to the extent that it fills the remaining tokens with just those symbols.   
 
 2. biLSTM-LSTM Seq2seq  
-&emsp;&emsp;&emsp;&emsp;Buggy   --> ``  
-&emsp;&emsp;&emsp;&emsp;Predicted--> ``  
-&emsp;&emsp;&emsp;&emsp;Actual  --> ``  
+&emsp;&emsp;&emsp;&emsp;Buggy   --> `public void init ( ) { VAR_1 = java.util.Arrays.asList ( true , true , true , true , true , true , true , true , true ) ; }`  
+&emsp;&emsp;&emsp;&emsp;Predicted--> `public public ( ( ( ( ( ( ( ( ( ( ( ( )`  
+&emsp;&emsp;&emsp;&emsp;Actual  --> `public void init ( ) { VAR_1 = java.util.Arrays.asList ( true , true , true , true , true , true , true , true , true , true ) ; }`  
 The attention model is better at limiting itself ; Giving something smaller and coherent instead of simply spamming the commonly occurring tokens, but displays a severe lack of understanding the structure - choosing to use the same output sequence again and again. This could very well be a training flaw as well - the optimizer and learning rate choice was probably a poor one for this model. 
 
 ### Computational Cost
@@ -106,9 +106,30 @@ That being said, it is not flawless by any means - the Transformer model also su
 &emsp;&emsp;&emsp;&emsp;Actual     --> `public boolean METHOD_1 ( java.lang.CharSequence value ) { return ( ! ( TYPE_1 . isEmpty ( value ) ) ) && ( ( value . length ( ) ) >= ( VAR_1 ) ) ; }`  
 
 ## Transformer Analysis  
-Using the `bertviz` library, it is easy to visualise the various ways in which tokens attend to eacother, be it self attention in the encoder/decoder stacks, or the cross attention between them.
+Using the `bertviz` library, it is easy to visualise the various ways in which tokens attend to eacother, be it self attention in the encoder/decoder stacks, or the cross attention between them. Consider this for the buggy input, `protected void METHOD_1 ( ) { listener . METHOD_2 ( this ) ; super . METHOD_1 ( ) ; }`  
+<table>
+  <tr>
+    <td align="center">Encoder Attentions</td>
+    <td align="center">Decoder Attentions</td>
+    <td align="center">Cross Attentions</td>
+  </tr>
+  <tr>
+    <td><img width="400" height="650" alt="Encoder Attentions" src="https://github.com/user-attachments/assets/0240d202-7296-4264-8f01-acca9d93e055" /></td>
+    <td><img width="400" height="400" alt="Decoder Attentions" src="https://github.com/user-attachments/assets/2091bb77-8746-4a4c-bdd9-5b6b3bd94125" /></td>
+    <td><img width="400" height="650" alt="Cross Attentions" src="https://github.com/user-attachments/assets/26d7c61a-2f2f-4f0f-8b53-264b8bf302b6" /></td>
+  </tr>
+</table>  
 
-<img width="450" height="400" alt="transformer_attention" src="PLACEHOLDER" />  
+<i>More can be visualised and observed in the inference notebook!</i>  
+For the time being, can draw some conclusions from the attention visualisations of some of the layer heads. Note that the encoder input tokens are on the right, and the decoder output tokens are on the left.  
+* A significant number of heads seem to not be performing any operations on the inputs. It's a sign of redundancy.
+* Look at this head...
+<img width="364" height="623" alt="image" src="https://github.com/user-attachments/assets/671599ba-233a-448e-a3de-c40d855879b5" />  <img width="363" height="622" alt="image" src="https://github.com/user-attachments/assets/9c6b7b6c-f560-4793-81aa-2a3caf752126" /> <img width="360" height="621" alt="image" src="https://github.com/user-attachments/assets/4334881a-d307-44cc-af55-fb68dba8a1f6" />
+
+
+
+this head has learnt to attend to the presence of all other methods 
+
 
 ## Conclusion
 
