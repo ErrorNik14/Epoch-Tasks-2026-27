@@ -161,17 +161,19 @@ Let's observe how the model attends to each token, using the `bertviz` library's
 <img width="176" height="180" alt="image" src="https://github.com/user-attachments/assets/4013b994-f4e1-4a08-a5b5-cffc692cf45d" />  
 This is the attention visualisation for all tokens to eachother. The two colours represent the attention from each of the two heads.  
 We shall observe some examples and see what emergent properties have arisen.
-* Layer 0 - The heads haven't really learned anything consistent. Some tokens attend to adjacently ranked tokens, some only to themselves, etc.  
-  <img width="176" height="180" alt="image" src="https://github.com/user-attachments/assets/c66e575f-a816-4ebd-a9b9-87e3c49e6948" /> <img width="176" height="180" alt="image" src="https://github.com/user-attachments/assets/b37ab81f-0bfc-4527-950c-2938f1f162f7" /> <img width="176" height="180" alt="image" src="https://github.com/user-attachments/assets/2a0ffc5a-85bc-4798-8609-5a2046952c19" />  
-* Layer 1 - Some clear `head1`-only properties are visible. Most tokens either only attend to the rank-wise previous or next elements, showing signs of pair-wise comparisons and global comparisons. The rank-wise greatest element only attends to itself. `head2` remains almost silent for all the tokens.  
-<img width="176" height="180" alt="image" src="https://github.com/user-attachments/assets/1d4ec509-05bc-4878-a2e2-2980563fdfe4" /> <img width="176" height="180" alt="image" src="https://github.com/user-attachments/assets/0e7f6e66-5e40-44ad-b470-bd52b6a0284e" /> <img width="176" height="180" alt="image" src="https://github.com/user-attachments/assets/4d8dfb5a-6135-4f8c-b02c-36216a8f96a6" />
+* Layer 0 - `head2` seems to have learnt rank-wise adjacent elements. Most tokens attend to the rank-wise neighbours, showing signs of pair-wise comparisons and global comparisons. `head1` remains mostly spread out.  
+   <img width="176" height="180" alt="image" src="https://github.com/user-attachments/assets/38bf829c-3349-4886-bbd5-3ee61299c489" /> <img width="176" height="180" alt="image" src="https://github.com/user-attachments/assets/e8a1ac5a-4975-4902-97e4-e1bbe45e57f4" /> <img width="176" height="180" alt="image" src="https://github.com/user-attachments/assets/de4583d9-312f-4519-ad94-efd0c3a84c3a" />  
+* Layer 1 - Similarly, `head1`-only properties are visible. Most tokens either attend to the rank-wise smaller or greater token. The rank-wise greatest element only attends to itself. Now, `head2` remains almost silent for all the tokens.  
+<img width="176" height="180" alt="image" src="https://github.com/user-attachments/assets/1d4ec509-05bc-4878-a2e2-2980563fdfe4" /> <img width="176" height="180" alt="image" src="https://github.com/user-attachments/assets/fb5c0e0b-b923-40c3-b8e3-3337cda56de4" /> <img width="176" height="180" alt="image" src="https://github.com/user-attachments/assets/4d8dfb5a-6135-4f8c-b02c-36216a8f96a6" />
 * Layer 2 - Both `head1` and `head2` are active - Almost all tokens seem to be attending to both rank-wise adjacent tokens, except the smallest and largest token, who attend to the rank-wise larger and smaller token, respectively. The attention given by `head1` is seemingly stronger than that by `head2`.  
 <img width="176" height="180" alt="image" src="https://github.com/user-attachments/assets/73d8fdf9-55ab-4197-b498-03dedf0b6f6b" /> <img width="176" height="180" alt="image" src="https://github.com/user-attachments/assets/e5d563f8-1f9d-4cee-921b-afab97e5384a" /> <img width="176" height="180" alt="image" src="https://github.com/user-attachments/assets/c10163ae-4aa2-4548-8494-97619749492d" />  
-
-It is clear from these that the "BERT" model has indeed learnt to-
-* compare elements pair-wise
-* understand the concept of a minimum element and a maximum element
-* sorting globally across the sequence  
+  
+  
+It is clear from these that the "BERT" model has indeed learnt to-  
+* split learning between the heads over the layers, some capturing rank-wise next or previous, while some capture rank-wise locality.  
+* compare elements pair-wise.  
+* understand the concept of a minimum element and a maximum element.  
+* sorting globally across the sequence.  
 
 ## Ablation Studies
 Now moving onto my ablation studies. They will be divided into two segments-  
